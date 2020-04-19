@@ -46,7 +46,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
    */
   protected String getBundleName() {
 
-    return "io.github.mmm.ui.nls.Messages";
+    return "io.github.mmm.ui.nls.UiMessages";
   }
 
   /**
@@ -91,9 +91,9 @@ public class AbstractUiLocalizer implements UiLocalizer {
     if (context instanceof CharSequence) {
       suffix = context.toString();
     } else {
-      suffix = context.getClass().getSimpleName();
+      suffix = "_" + context.getClass().getSimpleName();
     }
-    String contextKey = key + "_" + suffix;
+    String contextKey = key + suffix;
     if (this.bundle.containsKey(contextKey)) {
       return this.bundle.getString(contextKey);
     }
