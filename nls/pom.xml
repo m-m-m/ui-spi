@@ -17,5 +17,9 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>mmm-ui-spi-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mmm-l10n-all</artifactId>
+    </dependency>
   </dependencies>
 </project>
