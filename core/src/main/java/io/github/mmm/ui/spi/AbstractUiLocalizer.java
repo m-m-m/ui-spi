@@ -60,6 +60,14 @@ public class AbstractUiLocalizer implements UiLocalizer {
     return this.bundle;
   }
 
+  private String doLocalize(String key) {
+
+    if (getBundle().containsKey(key)) {
+      return this.bundle.getString(key);
+    }
+    return null;
+  }
+
   @Override
   public String localize(String key, Object context, boolean contextOnly) {
 
@@ -69,9 +77,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
     }
     if (!contextOnly) {
       if (message == null) {
-        if (this.bundle.containsKey(key)) {
-          message = this.bundle.getString(key);
-        }
+        message = doLocalize(key);
       }
       if (message == null) {
         message = key;
@@ -94,10 +100,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
       suffix = "_" + context.getClass().getSimpleName();
     }
     String contextKey = key + suffix;
-    if (this.bundle.containsKey(contextKey)) {
-      return this.bundle.getString(contextKey);
-    }
-    return null;
+    return doLocalize(contextKey);
   }
 
 }
