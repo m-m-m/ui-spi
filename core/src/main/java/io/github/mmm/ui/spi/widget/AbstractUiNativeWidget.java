@@ -4,7 +4,7 @@ package io.github.mmm.ui.spi.widget;
 
 import io.github.mmm.event.EventListener;
 import io.github.mmm.event.EventSourceAdapter;
-import io.github.mmm.ui.api.UiContext;
+import io.github.mmm.ui.api.UiLocalizer;
 import io.github.mmm.ui.api.attribute.AttributeWriteValidationFailure;
 import io.github.mmm.ui.api.datatype.UiPropagation;
 import io.github.mmm.ui.api.datatype.UiValidState;
@@ -375,7 +375,8 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
       if (valid) {
         setValidationFailure(null);
       } else {
-        setValidationFailure(UiContext.get().getDefaultValidationFailure());
+        String failure = UiLocalizer.get().localize(UiLocalizer.KEY_DEFAULT_VALIDATION_FAILURE);
+        setValidationFailure(failure);
       }
     }
     if (this instanceof UiValidatableWidget) {
@@ -391,7 +392,7 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
     if ((validator != null) && (validator != Validator.none())) {
       V value = widget.getValue();
       ValidationResult result = validator.validate(value, widget.getId());
-      String error = result.getLocalizedMessage(UiContext.get().getLocale());
+      String error = result.getLocalizedMessage(UiLocalizer.get().getLocale());
       widget.setValidationFailure(error);
       valid = (error == null);
       if (!valid && state.isSetFocus() && (this instanceof UiInput)) {

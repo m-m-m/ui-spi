@@ -5,6 +5,7 @@ package io.github.mmm.ui.spi;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import io.github.mmm.base.text.CaseHelper;
 import io.github.mmm.ui.api.UiLocalizer;
 
 /**
@@ -55,15 +56,21 @@ public class AbstractUiLocalizer implements UiLocalizer {
   public ResourceBundle getBundle() {
 
     if (this.bundle == null) {
-      this.bundle = ResourceBundle.getBundle(getBundleName(), this.locale);
+      try {
+        this.bundle = ResourceBundle.getBundle(getBundleName(), this.locale);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     return this.bundle;
   }
 
   private String doLocalize(String key) {
 
-    if (getBundle().containsKey(key)) {
-      return this.bundle.getString(key);
+    String i18nKey = CaseHelper.toLowerCase(key);
+    ResourceBundle resourceBundle = getBundle();
+    if ((resourceBundle != null) && resourceBundle.containsKey(i18nKey)) {
+      return this.bundle.getString(i18nKey);
     }
     return null;
   }
