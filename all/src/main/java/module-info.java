@@ -7,6 +7,8 @@
  */
 module io.github.mmm.ui.spi.all {
 
+  requires transitive io.github.mmm.ui.spi.controller;
+
   requires transitive io.github.mmm.ui.spi.datatype;
 
   requires transitive io.github.mmm.ui.spi.nls;

@@ -7,23 +7,15 @@
     <artifactId>mmm-ui-spi-parent</artifactId>
     <version>${revision}${changelist}</version>
   </parent>
-  <artifactId>mmm-ui-spi-all</artifactId>
+  <artifactId>mmm-ui-spi-controller</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-  <description>Provides the default implementation for native language support (NLS) in UI.</description>
+  <description>Provides SPI for controller management and navigation.</description>
   
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mmm-ui-spi-datatype</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mmm-ui-spi-nls</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mmm-ui-spi-controller</artifactId>
+      <artifactId>mmm-ui-api-controller</artifactId>
     </dependency>
   </dependencies>
 </project>

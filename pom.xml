@@ -22,6 +22,7 @@
 
   <modules>
     <module>all</module>
+    <module>controller</module>
     <module>core</module>
     <module>datatype</module>
     <module>nls</module>
@@ -46,6 +47,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-ui-spi-all</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-ui-spi-controller</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
