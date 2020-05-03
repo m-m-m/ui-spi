@@ -19,8 +19,16 @@ public class AbstractUiNavigationManagerImpl extends AbstractUiNavigationManager
 
   private int size;
 
+  /**
+   * The constructor.
+   */
+  public AbstractUiNavigationManagerImpl() {
+
+    super();
+  }
+
   @Override
-  public void init() {
+  protected void doInit() {
 
     navigateTo(UiPlace.HOME);
   }

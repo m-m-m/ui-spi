@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
-import io.github.mmm.base.exception.DuplicateObjectException;
-import io.github.mmm.base.exception.ObjectNotFoundException;
 import io.github.mmm.event.AbstractEventSource;
 import io.github.mmm.ui.api.controller.AbstractUiController;
 import io.github.mmm.ui.api.controller.UiController;
@@ -37,17 +35,11 @@ public abstract class AbstractUiNavigationManager
   /**
    * The constructor.
    */
-  @SuppressWarnings("rawtypes")
   public AbstractUiNavigationManager() {
 
     super();
     this.id2controllerMap = new HashMap<>();
     this.type2controllerMap = new HashMap<>();
-    this.currentPlace = UiPlace.NONE;
-    ServiceLoader<AbstractUiController> serviceLoader = ServiceLoader.load(AbstractUiController.class);
-    for (AbstractUiController<?> controller : serviceLoader) {
-      register(controller);
-    }
   }
 
   private void register(AbstractUiController<?> controller) {
@@ -55,7 +47,8 @@ public abstract class AbstractUiNavigationManager
     String id = controller.getId();
     AbstractUiController<?> existing = this.id2controllerMap.put(id, controller);
     if (existing != null) {
-      throw new DuplicateObjectException(controller, id, existing);
+      // throw new DuplicateObjectException(controller, id, existing);
+      throw new IllegalStateException(id);
     }
   }
 
@@ -71,7 +64,9 @@ public abstract class AbstractUiNavigationManager
 
     AbstractUiController<W> controller = getController(id);
     if (controller == null) {
-      throw new ObjectNotFoundException("UiController", id);
+      // throw new ObjectNotFoundException("UiController", id);
+      System.out.println(id);
+      throw new IllegalArgumentException(id);
     }
     return controller;
   }
@@ -86,7 +81,24 @@ public abstract class AbstractUiNavigationManager
   /**
    * Initializes this navigation manager and navigates to the initial {@link UiPlace}.
    */
-  public abstract void init();
+  @SuppressWarnings("rawtypes")
+  public final void init() {
+
+    if (this.currentPlace != null) {
+      return; // already initialized
+    }
+    ServiceLoader<UiController> serviceLoader = ServiceLoader.load(UiController.class);
+    for (UiController<?> controller : serviceLoader) {
+      register((AbstractUiController<?>) controller);
+    }
+    doInit();
+    this.currentPlace = UiPlace.NONE;
+  }
+
+  /**
+   * @see #init()
+   */
+  protected abstract void doInit();
 
   @Override
   public UiPlace getCurrentPlace() {
