@@ -4,11 +4,13 @@
  */
 /**
  * Provides widget factories for common datatypes.
+ * 
+ * @provides io.github.mmm.ui.api.factory.UiSingleWidgetFactoryDatatype
  */
 @SuppressWarnings("rawtypes") //
 module io.github.mmm.ui.spi.datatype {
 
-  requires transitive io.github.mmm.ui.api.core;
+  requires transitive io.github.mmm.ui.api.number;
 
   provides io.github.mmm.ui.api.factory.UiSingleWidgetFactoryDatatype with //
       io.github.mmm.ui.spi.factory.datatype.UiFactoryDatatypeInteger, //

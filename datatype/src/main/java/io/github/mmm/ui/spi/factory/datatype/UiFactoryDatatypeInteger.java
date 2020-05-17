@@ -4,7 +4,7 @@ package io.github.mmm.ui.spi.factory.datatype;
 
 import io.github.mmm.ui.api.factory.UiSingleWidgetFactoryDatatype;
 import io.github.mmm.ui.api.widget.input.UiInput;
-import io.github.mmm.ui.api.widget.input.UiIntegerInput;
+import io.github.mmm.ui.api.widget.number.UiIntegerInput;
 
 /**
  * Implementation of {@link UiSingleWidgetFactoryDatatype} for type {@link Integer}.
