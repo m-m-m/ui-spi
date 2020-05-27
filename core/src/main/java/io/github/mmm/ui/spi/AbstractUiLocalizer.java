@@ -2,11 +2,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package io.github.mmm.ui.spi;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
-import io.github.mmm.base.text.CaseHelper;
+import io.github.mmm.base.i18n.Localizable;
 import io.github.mmm.ui.api.UiLocalizer;
+import io.github.mmm.validation.Validatable;
 
 /**
  * Abstract base implementation of {@link UiLocalizer}.
@@ -15,7 +18,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
 
   private Locale locale;
 
-  private ResourceBundle bundle;
+  private final Map<String, UiLocalizerBundle> bundleMap;
 
   /**
    * The constructor.
@@ -24,6 +27,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
 
     super();
     this.locale = Locale.getDefault();
+    this.bundleMap = new HashMap<>();
   }
 
   @Override
@@ -37,42 +41,108 @@ public class AbstractUiLocalizer implements UiLocalizer {
    */
   public void setLocale(Locale locale) {
 
+    if (locale == null) {
+      locale = Locale.getDefault();
+    }
+    if (this.locale.equals(locale)) {
+      return;
+    }
     this.locale = locale;
-    this.bundle = null;
+    this.bundleMap.clear();
   }
 
   /**
-   * @return the {@link ResourceBundle#getBaseBundleName() bundle name} of the {@link #getBundle() resource bundle} used
-   *         for localization.
+   * @return the {@link ResourceBundle#getBaseBundleName() bundle name} of the default {@link ResourceBundle} for
+   *         localization.
    */
   protected String getBundleName() {
 
-    return "io.github.mmm.ui.nls.UiMessages";
+    return "l10n.io.github.mmm.ui.UiMessages";
   }
 
   /**
-   * @return bundle
+   * @param context the context {@link Object} - see {@link #localize(String, Object, boolean)}.
+   * @return the derived {@link ResourceBundle#getBaseBundleName() bundle name}.
    */
-  public ResourceBundle getBundle() {
+  protected String getBundleName(Object context) {
 
-    if (this.bundle == null) {
-      try {
-        this.bundle = ResourceBundle.getBundle(getBundleName(), this.locale);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    if (context == null) {
+      return getBundleName();
+    } else if (context instanceof CharSequence) {
+      return context.toString();
     }
-    return this.bundle;
+    Class<?> type;
+    if (context instanceof Class) {
+      type = (Class<?>) context;
+    } else {
+      type = context.getClass();
+    }
+    return Localizable.createBundleName(type);
   }
 
-  private String doLocalize(String key) {
+  /**
+   * @return the {@link UiLocalizerBundle} for the given {@link ResourceBundle#getBundle(String, Locale) bundle name}.
+   */
+  protected UiLocalizerBundle getBundle() {
 
-    String i18nKey = CaseHelper.toLowerCase(key);
-    ResourceBundle resourceBundle = getBundle();
-    if ((resourceBundle != null) && resourceBundle.containsKey(i18nKey)) {
-      return this.bundle.getString(i18nKey);
+    return getBundle(null);
+  }
+
+  /**
+   * @param context the context {@link Object} - see {@link #localize(String, Object, boolean)}.
+   * @return the {@link UiLocalizerBundle} for the given {@code bundleName}.
+   */
+  protected UiLocalizerBundle getBundle(Object context) {
+
+    String bundleName = getBundleName(context);
+    UiLocalizerBundle bundle = this.bundleMap.get(bundleName);
+    if (bundle == null) {
+      Class<?> contextType;
+      if (context instanceof Class) {
+        contextType = (Class<?>) context;
+      } else if (context != null) {
+        contextType = context.getClass();
+      } else {
+        contextType = null;
+      }
+      bundle = createBundle(bundleName, contextType);
+      this.bundleMap.put(bundleName, bundle);
     }
-    return null;
+    return bundle;
+  }
+
+  /**
+   * @param bundleName the {@link ResourceBundle#getBundle(String, Locale) bundle name}.
+   * @param contextType the optional {@link Class} reflecting the context.
+   * @return the {@link UiLocalizerBundle}.
+   */
+  protected UiLocalizerBundle createBundle(String bundleName, Class<?> contextType) {
+
+    UiLocalizerBundle parentBundle = null;
+    if (contextType != null) {
+      Class<?> superclass = contextType.getSuperclass();
+      if ((superclass != null) && isInheritContext(superclass)) {
+        parentBundle = getBundle(superclass);
+      }
+    }
+    ResourceBundle resourceBundle;
+    try {
+      resourceBundle = ResourceBundle.getBundle(bundleName, this.locale);
+    } catch (Exception e) {
+      System.out.println("Could not find bundle for base name " + bundleName);
+      if (parentBundle == null) {
+        return UiLocalizerBundle.EMPTY;
+      } else {
+        return parentBundle;
+      }
+    }
+    return new UiLocalizerBundle(resourceBundle, parentBundle);
+  }
+
+  private boolean isInheritContext(Class<?> superclass) {
+
+    // ReadableBean is not in our dependencies here...
+    return Validatable.class.isAssignableFrom(superclass);
   }
 
   @Override
@@ -80,34 +150,12 @@ public class AbstractUiLocalizer implements UiLocalizer {
 
     String message = null;
     if (context != null) {
-      message = localizeWithContext(key, context);
+      message = getBundle(context).localize(key);
     }
-    if (!contextOnly) {
-      if (message == null) {
-        message = doLocalize(key);
-      }
-      if (message == null) {
-        message = key;
-      }
+    if (!contextOnly && (message == null)) {
+      message = getBundle().localize(key);
     }
     return message;
-  }
-
-  /**
-   * @param key the {@link #localize(String) message key}.
-   * @param context the {@link #localize(String, Object) context}. Will not be {@code null}.
-   * @return the localized message or {@code null} if no context specific localization was found.
-   */
-  protected String localizeWithContext(String key, Object context) {
-
-    String suffix;
-    if (context instanceof CharSequence) {
-      suffix = context.toString();
-    } else {
-      suffix = "_" + context.getClass().getSimpleName();
-    }
-    String contextKey = key + suffix;
-    return doLocalize(contextKey);
   }
 
 }
