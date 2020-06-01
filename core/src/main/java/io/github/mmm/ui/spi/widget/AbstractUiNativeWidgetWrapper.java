@@ -17,6 +17,8 @@ public abstract class AbstractUiNativeWidgetWrapper<W> extends AbstractUiNativeW
 
   private UiStyles styles;
 
+  private String tooltip;
+
   /**
    * The constructor.
    */
@@ -49,6 +51,24 @@ public abstract class AbstractUiNativeWidgetWrapper<W> extends AbstractUiNativeW
 
     // nothing by default
   }
+
+  @Override
+  public final String getTooltip() {
+
+    return this.tooltip;
+  }
+
+  @Override
+  public final void setTooltip(String tooltip) {
+
+    setTooltipNative(tooltip);
+    this.tooltip = tooltip;
+  }
+
+  /**
+   * @param newTooltip the new tooltip to apply.
+   */
+  protected abstract void setTooltipNative(String newTooltip);
 
   private class Styles extends UiStylesImpl {
 
