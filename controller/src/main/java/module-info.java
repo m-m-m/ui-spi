@@ -4,6 +4,9 @@
  */
 /**
  * Provides SPI for controller management and navigation.
+ * 
+ * @provides io.github.mmm.ui.api.controller.UiController
+ * @uses io.github.mmm.ui.api.controller.UiController
  */
 @SuppressWarnings("rawtypes") //
 module io.github.mmm.ui.spi.controller {

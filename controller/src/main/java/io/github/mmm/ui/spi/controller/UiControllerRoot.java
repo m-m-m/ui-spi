@@ -2,19 +2,17 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package io.github.mmm.ui.spi.controller;
 
-import io.github.mmm.ui.api.controller.AbstractUiController;
-import io.github.mmm.ui.api.controller.UiControllerSlot;
+import io.github.mmm.ui.api.controller.UiController;
+import io.github.mmm.ui.api.controller.UiEmbedding;
 import io.github.mmm.ui.api.controller.UiPlace;
-import io.github.mmm.ui.api.widget.UiRegularWidget;
-import io.github.mmm.ui.api.widget.composite.UiMutableSingleComposite;
 import io.github.mmm.ui.api.widget.composite.UiSlot;
 import io.github.mmm.ui.api.widget.window.UiMainWindow;
 
 /**
- * {@link io.github.mmm.ui.api.controller.UiController} with {@link #getType() type}
+ * {@link io.github.mmm.ui.api.controller.UiController} with {@link #getId() ID}
  * {@link io.github.mmm.ui.api.controller.UiController#ID_ROOT root}.
  */
-public class UiControllerRoot extends AbstractUiController<UiMainWindow> {
+public class UiControllerRoot extends AbstractUiController<UiSlot> {
 
   private UiSlot slot;
 
@@ -32,28 +30,24 @@ public class UiControllerRoot extends AbstractUiController<UiMainWindow> {
   }
 
   @Override
-  public String getType() {
+  protected UiSlot createView() {
 
-    return TYPE_ROOT;
-  }
-
-  @Override
-  protected UiMainWindow createView() {
-
-    return UiMainWindow.get();
-  }
-
-  @Override
-  public UiMutableSingleComposite<? extends UiRegularWidget> getSlot(String slotId) {
-
-    if (TYPE_PAGE.equals(slotId)) {
-      if (this.slot == null) {
-        this.slot = UiSlot.of(slotId);
-        UiMainWindow.get().addChild(this.slot);
-      }
-      return this.slot;
+    if (this.slot == null) {
+      this.slot = UiSlot.of(ID_ROOT);
+      UiMainWindow.get().addChild(this.slot);
     }
-    return super.getSlot(slotId);
+    return this.slot;
+  }
+
+  @Override
+  protected boolean doEmbed(String slotId, UiController<?> childController) {
+
+    if (ID_PAGE.equals(slotId)) {
+      this.slot.setChild(childController.getView());
+      return false;
+    } else {
+      return super.doEmbed(slotId, childController);
+    }
   }
 
   @Override
@@ -64,7 +58,7 @@ public class UiControllerRoot extends AbstractUiController<UiMainWindow> {
   }
 
   @Override
-  protected UiControllerSlot doShow(UiPlace newPlace, UiControllerSlot newSlot) {
+  protected final UiEmbedding doShow(UiPlace newPlace, UiEmbedding newSlot) {
 
     return null;
   }

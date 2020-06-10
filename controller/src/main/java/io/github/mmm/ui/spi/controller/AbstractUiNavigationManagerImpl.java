@@ -2,9 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package io.github.mmm.ui.spi.controller;
 
-import io.github.mmm.ui.api.controller.AbstractUiController;
 import io.github.mmm.ui.api.controller.UiPlace;
-import io.github.mmm.ui.api.widget.UiWidget;
 
 /**
  * Abstract default implementation of {@link io.github.mmm.ui.api.controller.UiNavigationManager}.
@@ -38,7 +36,7 @@ public class AbstractUiNavigationManagerImpl extends AbstractUiNavigationManager
 
     UiNavigationNode next = new UiNavigationNode(place);
     if (this.current != null) {
-      clearTail(this.current.next);
+      // clearTail(this.current.next);
       this.size = this.index;
       this.current.next = next;
       next.previous = this.current;
@@ -53,7 +51,7 @@ public class AbstractUiNavigationManagerImpl extends AbstractUiNavigationManager
 
     UiNavigationNode next = new UiNavigationNode(place);
     if (this.current != null) {
-      clearTail(this.current.next);
+      // clearTail(this.current.next);
       this.size = this.index;
       this.current.next = next;
       next.previous = this.current;
@@ -65,7 +63,7 @@ public class AbstractUiNavigationManagerImpl extends AbstractUiNavigationManager
 
     while (node != null) {
       String id = node.getPlace().getId();
-      AbstractUiController<UiWidget> controller = getController(id);
+      AbstractUiController<?> controller = getController(id);
       if (controller != null) {
         controller.reset();
       }

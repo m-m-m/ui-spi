@@ -8,15 +8,13 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 
 import io.github.mmm.event.AbstractEventSource;
-import io.github.mmm.ui.api.controller.AbstractUiController;
 import io.github.mmm.ui.api.controller.UiController;
-import io.github.mmm.ui.api.controller.UiControllerSlot;
+import io.github.mmm.ui.api.controller.UiEmbedding;
 import io.github.mmm.ui.api.controller.UiNavigationEvent;
 import io.github.mmm.ui.api.controller.UiNavigationEventListener;
 import io.github.mmm.ui.api.controller.UiNavigationManager;
 import io.github.mmm.ui.api.controller.UiPlace;
-import io.github.mmm.ui.api.widget.UiWidget;
-import io.github.mmm.ui.api.widget.composite.UiMutableSingleComposite;
+import io.github.mmm.ui.api.widget.UiRegularWidget;
 
 /**
  * Abstract base implementation of {@link UiNavigationManager}.
@@ -28,7 +26,7 @@ public abstract class AbstractUiNavigationManager
 
   private final Map<String, AbstractUiController<?>> id2controllerMap;
 
-  private final Map<String, AbstractUiController<?>> type2controllerMap;
+  private final Map<UiEmbedding, AbstractUiController<?>> slot2controllerMap;
 
   private UiPlace currentPlace;
 
@@ -39,7 +37,7 @@ public abstract class AbstractUiNavigationManager
 
     super();
     this.id2controllerMap = new HashMap<>();
-    this.type2controllerMap = new HashMap<>();
+    this.slot2controllerMap = new HashMap<>();
   }
 
   private void register(AbstractUiController<?> controller) {
@@ -54,13 +52,13 @@ public abstract class AbstractUiNavigationManager
 
   @SuppressWarnings("unchecked")
   @Override
-  public <W extends UiWidget> AbstractUiController<W> getController(String id) {
+  public <W extends UiRegularWidget> AbstractUiController<W> getController(String id) {
 
     return (AbstractUiController<W>) this.id2controllerMap.get(id);
   }
 
   @Override
-  public <W extends UiWidget> AbstractUiController<W> getRequiredController(String id) {
+  public <W extends UiRegularWidget> AbstractUiController<W> getRequiredController(String id) {
 
     AbstractUiController<W> controller = getController(id);
     if (controller == null) {
@@ -69,13 +67,6 @@ public abstract class AbstractUiNavigationManager
       throw new IllegalArgumentException(id);
     }
     return controller;
-  }
-
-  @SuppressWarnings("unchecked")
-  @Override
-  public <W extends UiWidget> UiController<W> getCurrentDialog(String type) {
-
-    return (UiController<W>) this.type2controllerMap.get(type);
   }
 
   /**
@@ -163,27 +154,49 @@ public abstract class AbstractUiNavigationManager
 
   /**
    * @param place the {@link UiPlace}.
-   * @param slot the optional {@link UiControllerSlot}.
-   * @return the {@link AbstractUiController} that has been {@link AbstractUiController#show(UiPlace, UiControllerSlot)
+   * @param embedding the optional {@link UiEmbedding}.
+   * @return the {@link AbstractUiController} that has been {@link AbstractUiController#show(UiPlace, UiEmbedding)
    *         shown}.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  protected AbstractUiController<UiWidget> navigateRecursive(UiPlace place, UiControllerSlot slot) {
+  protected AbstractUiController<?> navigateRecursive(UiPlace place, UiEmbedding embedding) {
 
     String id;
-    if (slot == null) {
+    if (embedding == null) {
       id = place.getId();
     } else {
-      id = slot.getId();
+      id = embedding.getControllerId();
     }
-    AbstractUiController<UiWidget> controller = getRequiredController(id);
-    UiControllerSlot parentSlot = controller.show(place, slot);
+    AbstractUiController<?> controller = getRequiredController(id);
+    if ((embedding == null) && !controller.isNavigable()) {
+      throw new IllegalStateException(id);
+    }
+    UiEmbedding parentSlot = controller.show(place, embedding);
     if (parentSlot != null) {
-      AbstractUiController<UiWidget> parentController = navigateRecursive(place, parentSlot);
-      UiMutableSingleComposite uiSlot = parentController.getSlot(parentSlot.getSlot());
-      uiSlot.setChild(controller.getView());
+      AbstractUiController<?> parentController = navigateRecursive(place, parentSlot);
+      parentController.getView(); // ensure view is already created to prevent NPEs of naive controller developers
+      parentController.embed(parentSlot, controller);
+    } else {
+      assert (UiController.ID_ROOT.equals(id));
     }
     return controller;
+  }
+
+  /**
+   * Called from {@link AbstractUiController#embed(UiEmbedding, UiController)} to register {@link UiController}s in
+   * their current {@link UiEmbedding}s and hide previous {@link UiController}s when replaced in that
+   * {@link UiEmbedding#getSlotId() slot}.
+   *
+   * @param embedding the {@link UiEmbedding}.
+   * @param controller the {@link AbstractUiController}.
+   */
+  protected void onEmbedded(UiEmbedding embedding, AbstractUiController<?> controller) {
+
+    AbstractUiController<?> previousSlotController = this.slot2controllerMap.put(embedding, controller);
+    if (previousSlotController != null) {
+      previousSlotController.hide();
+      // TODO: consider tracking timestamps and reset old controllers to free memory
+    }
+
   }
 
 }

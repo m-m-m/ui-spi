@@ -15,6 +15,8 @@ import io.github.mmm.ui.spi.UiStylesImpl;
 public abstract class AbstractUiNativeWidgetWrapper<W> extends AbstractUiNativeWidget
     implements UiNativeWidgetWrapper<W> {
 
+  private String id;
+
   private UiStyles styles;
 
   private String tooltip;
@@ -45,6 +47,14 @@ public abstract class AbstractUiNativeWidgetWrapper<W> extends AbstractUiNativeW
   }
 
   /**
+   * @return the {@link UiStyles} implementation used by {@link #getStyles()}.
+   */
+  protected final UiStyles createDefaultStyles() {
+
+    return new Styles();
+  }
+
+  /**
    * @param newStyles the new styles.
    */
   protected void onStylesChanged(String newStyles) {
@@ -69,6 +79,24 @@ public abstract class AbstractUiNativeWidgetWrapper<W> extends AbstractUiNativeW
    * @param newTooltip the new tooltip to apply.
    */
   protected abstract void setTooltipNative(String newTooltip);
+
+  @Override
+  public String getId() {
+
+    return this.id;
+  }
+
+  @Override
+  public void setId(String id) {
+
+    this.id = id;
+    setIdNative(id);
+  }
+
+  /**
+   * @param id the new {@link #getId() ID}.
+   */
+  protected abstract void setIdNative(String id);
 
   private class Styles extends UiStylesImpl {
 
