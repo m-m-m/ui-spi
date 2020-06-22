@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.github.mmm.ui.api.datatype.UiStyles;
-import io.github.mmm.ui.spi.UiStylesImpl;
 
 /**
  * Test of {@link UiStylesImpl}.

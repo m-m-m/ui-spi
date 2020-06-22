@@ -55,6 +55,8 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
 
   private String validationFailure;
 
+  private String validationException;
+
   /**
    * The constructor.
    */
@@ -407,24 +409,44 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
   @Override
   public final String getValidationFailure() {
 
-    return this.validationFailure;
+    String failure = this.validationFailure;
+    if (failure == null) {
+      failure = this.validationException;
+    } else if (this.validationException != null) {
+      failure = this.validationException + "\n" + failure;
+    }
+    return failure;
   }
 
   @Override
-  public final void setValidationFailure(String validationFailure) {
+  public void setValidationFailure(String validationFailure, boolean valueException) {
 
     if (isEmpty(validationFailure)) {
-      if (this.validationFailure == null) {
-        return;
+      if (valueException) {
+        if (this.validationException == null) {
+          return;
+        }
+        this.validationException = null;
+      } else {
+        if (this.validationFailure == null) {
+          return;
+        }
+        this.validationFailure = null;
       }
-      this.validationFailure = null;
     } else {
-      if (validationFailure.equals(this.validationFailure)) {
-        return;
+      if (valueException) {
+        if (validationFailure.equals(this.validationException)) {
+          return;
+        }
+        this.validationException = validationFailure;
+      } else {
+        if (validationFailure.equals(this.validationFailure)) {
+          return;
+        }
+        this.validationFailure = validationFailure;
       }
-      this.validationFailure = validationFailure;
     }
-    doSetValidationFailure(this.validationFailure);
+    doSetValidationFailure(getValidationFailure());
   }
 
   /**
