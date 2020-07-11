@@ -61,7 +61,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
   }
 
   /**
-   * @param context the context {@link Object} - see {@link #localize(String, Object, boolean)}.
+   * @param context the context {@link Object} - see {@link #localizeOrNull(String, Object, boolean)}.
    * @return the derived {@link ResourceBundle#getBaseBundleName() bundle name}.
    */
   protected String getBundleName(Object context) {
@@ -89,7 +89,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
   }
 
   /**
-   * @param context the context {@link Object} - see {@link #localize(String, Object, boolean)}.
+   * @param context the context {@link Object} - see {@link #localizeOrNull(String, Object, boolean)}.
    * @return the {@link UiLocalizerBundle} for the given {@code bundleName}.
    */
   protected UiLocalizerBundle getBundle(Object context) {
@@ -146,7 +146,7 @@ public class AbstractUiLocalizer implements UiLocalizer {
   }
 
   @Override
-  public String localize(String key, Object context, boolean contextOnly) {
+  public String localizeOrNull(String key, Object context, boolean contextOnly) {
 
     String message = null;
     if (context != null) {
