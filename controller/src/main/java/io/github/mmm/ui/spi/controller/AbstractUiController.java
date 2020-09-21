@@ -5,6 +5,7 @@ package io.github.mmm.ui.spi.controller;
 import java.util.Objects;
 
 import io.github.mmm.base.exception.ObjectMismatchException;
+import io.github.mmm.ui.api.UiLocalizer;
 import io.github.mmm.ui.api.controller.UiController;
 import io.github.mmm.ui.api.controller.UiEmbedding;
 import io.github.mmm.ui.api.controller.UiNavigationManager;
@@ -44,6 +45,12 @@ public abstract class AbstractUiController<W extends UiRegularWidget> implements
    * @return the new instance of the {@link #getView() view}.
    */
   protected abstract W createView();
+
+  @Override
+  public String getTitle() {
+
+    return UiLocalizer.get().localize(getId());
+  }
 
   /**
    * @return the {@link UiEmbedding} where this controller is {@link #embed(UiEmbedding, UiController) embedded into its
