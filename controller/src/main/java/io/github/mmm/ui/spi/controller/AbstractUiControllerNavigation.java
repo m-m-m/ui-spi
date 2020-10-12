@@ -9,10 +9,10 @@ import io.github.mmm.ui.api.widget.UiRegularWidget;
 /**
  * {@link AbstractUiController} for {@link #ID_NAVIGATION navigation}.
  *
- * @param <W> type of the {@link #getView() view}.
+ * @param <V> type of the {@link #getView() view}.
  * @since 1.0.0
  */
-public abstract class AbstractUiControllerNavigation<W extends UiRegularWidget> extends AbstractUiController<W> {
+public abstract class AbstractUiControllerNavigation<V extends UiRegularWidget> extends AbstractUiController<V> {
 
   @Override
   public String getId() {

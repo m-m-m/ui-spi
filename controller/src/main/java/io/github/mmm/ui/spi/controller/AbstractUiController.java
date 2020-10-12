@@ -15,14 +15,14 @@ import io.github.mmm.ui.api.widget.UiRegularWidget;
 /**
  * Abstract base implementation of {@link UiController}.
  *
- * @param <W> type of the {@link #getView() view}.
+ * @param <V> type of the {@link #getView() view}.
  * @since 1.0.0
  */
-public abstract class AbstractUiController<W extends UiRegularWidget> implements UiController<W> {
+public abstract class AbstractUiController<V extends UiRegularWidget> implements UiController<V> {
 
   private UiEmbedding embedding;
 
-  private W view;
+  private V view;
 
   /**
    * The constructor.
@@ -33,7 +33,7 @@ public abstract class AbstractUiController<W extends UiRegularWidget> implements
   }
 
   @Override
-  public W getView() {
+  public V getView() {
 
     if (this.view == null) {
       this.view = createView();
@@ -44,7 +44,7 @@ public abstract class AbstractUiController<W extends UiRegularWidget> implements
   /**
    * @return the new instance of the {@link #getView() view}.
    */
-  protected abstract W createView();
+  protected abstract V createView();
 
   @Override
   public String getTitle() {
