@@ -46,6 +46,10 @@ public abstract class AbstractUiControllerPage extends AbstractUiControllerConte
   protected boolean doEmbed(String slotId, UiController<?> childController) {
 
     UiBorderPanel view = getView();
+    if (childController == null) {
+      throw new IllegalStateException(
+          "ChildController is null in controller '" + getId() + "' for slot '" + slotId + "'.");
+    }
     UiRegularWidget childView = childController.getView();
     switch (slotId) {
       case ID_CONTENT:
