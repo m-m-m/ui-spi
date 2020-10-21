@@ -36,7 +36,14 @@ public class UiLocalizerBundle {
    */
   public String localize(String key) {
 
-    return doLocalize(CaseHelper.toLowerCase(key));
+    String l10n = doLocalize(CaseHelper.toLowerCase(key));
+    if (l10n == null) {
+      l10n = doLocalize(key);
+      if (l10n != null) {
+        // todo debug log to use lower case...
+      }
+    }
+    return l10n;
   }
 
   private String doLocalize(String key) {
