@@ -311,14 +311,18 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
   public void setReadOnly(boolean readOnly) {
 
     int newReadOnly = READ_ONLY.setFlag(this.readOnlyState, readOnly);
+    boolean isComposite = (this instanceof UiComposite);
     if (newReadOnly == this.readOnlyState) {
-      return;
+      if (!isComposite) {
+        return;
+      }
+    } else {
+      this.readOnlyState = newReadOnly;
     }
-    this.readOnlyState = newReadOnly;
     Boolean readOnlyFixed = READ_ONLY_FIXED.getBoolean(this.readOnlyState);
     if (readOnlyFixed == null) {
       setReadOnlyNative(readOnly);
-      if (this instanceof UiComposite) {
+      if (isComposite) {
         UiComposite<?> composite = (UiComposite<?>) this;
         int childCount = composite.getChildCount();
         for (int i = 0; i < childCount; i++) {
