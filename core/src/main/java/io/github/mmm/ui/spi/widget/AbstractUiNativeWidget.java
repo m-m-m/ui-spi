@@ -11,6 +11,7 @@ import io.github.mmm.ui.api.datatype.UiValidState;
 import io.github.mmm.ui.api.datatype.bitmask.BitFlag;
 import io.github.mmm.ui.api.datatype.bitmask.BitMask;
 import io.github.mmm.ui.api.datatype.bitmask.BitValueBoolean;
+import io.github.mmm.ui.api.event.UiAttachingEvent;
 import io.github.mmm.ui.api.event.UiDisableEvent;
 import io.github.mmm.ui.api.event.UiEnableEvent;
 import io.github.mmm.ui.api.event.UiEvent;
@@ -45,6 +46,8 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
 
   private boolean handlersRegistered;
 
+  private boolean attached;
+
   private UiEventType programmaticEventType;
 
   private int visibleState;
@@ -71,6 +74,7 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
       this.visibleState = 1;
     }
     this.enabledState = 0;
+    this.attached = isVisibleWithoutRoot();
   }
 
   @Override
@@ -142,8 +146,41 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
     if (this.parent != null) {
       oldPropagation = this.parent.getPropagation();
     }
+    boolean newAttached;
+    if (parent != null) {
+      newAttached = parent.isAttached();
+    } else {
+      newAttached = isVisibleWithoutRoot();
+    }
     this.parent = parent;
     oldPropagation.updateParent(this);
+    if (newAttached != this.attached) {
+      onAttaching(UiAttachingEvent.of(this, this.attached));
+    }
+  }
+
+  @Override
+  public boolean isAttached() {
+
+    return this.attached;
+  }
+
+  /**
+   * @param event the {@link UiAttachingEvent}.
+   */
+  protected void onAttaching(UiAttachingEvent event) {
+
+    this.attached = event.isAttached();
+    if (this instanceof UiComposite<?>) {
+      UiComposite<?> composite = (UiComposite<?>) this;
+      int length = composite.getChildCount();
+      for (int i = 0; i < length; i++) {
+        UiWidget child = composite.getChild(i);
+        AbstractUiNativeWidget nativeChild = unwrap(child);
+        nativeChild.onAttaching(event);
+      }
+    }
+    fireEvent(event);
   }
 
   @Override
