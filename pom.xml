@@ -31,10 +31,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-ui-api-parent</artifactId>
-        <version>0.2.0</version>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- own modules -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-ui-spi-all</artifactId>
