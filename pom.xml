@@ -9,13 +9,14 @@
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
   <artifactId>mmm-ui-spi-parent</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Service Provider Interface (SPI) of mmm-ui-api to be shared between implementations.</description>
 
   <properties>
     <mmm.repository>ui-spi</mmm.repository>
+    <revision>0-SNAPSHOT</revision>
   </properties>
 
   <modules>
