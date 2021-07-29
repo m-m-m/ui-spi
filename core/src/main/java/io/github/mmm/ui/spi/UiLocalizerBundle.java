@@ -48,8 +48,11 @@ public class UiLocalizerBundle {
 
   private String doLocalize(String key) {
 
-    if ((this.bundle != null) && this.bundle.containsKey(key)) {
-      return this.bundle.getString(key);
+    if (this.bundle != null) {
+      String value = this.bundle.getString(key);
+      if (value != null) {
+        return value;
+      }
     }
     if (this.parent != null) {
       return this.parent.doLocalize(key);
