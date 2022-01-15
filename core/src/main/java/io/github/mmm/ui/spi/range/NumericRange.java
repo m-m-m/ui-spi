@@ -7,6 +7,7 @@ import java.math.BigInteger;
 
 import io.github.mmm.base.number.NumberType;
 import io.github.mmm.base.range.AbstractRange;
+import io.github.mmm.base.range.Range;
 import io.github.mmm.base.range.WritableRange;
 import io.github.mmm.validation.Validator;
 
@@ -16,7 +17,7 @@ import io.github.mmm.validation.Validator;
  * @param <V> type of the contained values.
  * @since 1.0.0
  */
-public class NumericRange<V extends Number> extends AbstractRange<V> implements WritableRange<V> {
+public class NumericRange<V extends Number & Comparable<?>> extends AbstractRange<V> implements WritableRange<V> {
 
   private final NumberType<V> type;
 
@@ -154,6 +155,20 @@ public class NumericRange<V extends Number> extends AbstractRange<V> implements 
    */
   protected void onValueChange() {
 
+  }
+
+  @Override
+  public Range<V> withMin(V minimum) {
+
+    setMin(minimum);
+    return this;
+  }
+
+  @Override
+  public Range<V> withMax(V maximum) {
+
+    setMax(maximum);
+    return this;
   }
 
 }
