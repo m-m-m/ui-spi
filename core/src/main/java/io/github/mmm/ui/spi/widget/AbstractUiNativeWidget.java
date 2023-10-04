@@ -40,7 +40,7 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
 
   private static final BitValueBoolean READ_ONLY_FIXED = BitValueBoolean.ofBoolean(1);
 
-  private EventSourceAdapter<UiEvent, UiEventListener> eventAdapter;
+  private EventSourceAdapter<UiEvent, EventListener<UiEvent>> eventAdapter;
 
   private UiComposite<?> parent;
 
@@ -81,13 +81,17 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
   public void addListener(UiEventListener listener, boolean weak) {
 
     ensureHandlers();
-    this.eventAdapter = this.eventAdapter.addListener(listener, weak);
+    EventListener<UiEvent> l = listener;
+    if (weak) {
+      l = l.weak(this);
+    }
+    this.eventAdapter = this.eventAdapter.addListener(l);
   }
 
   @Override
   public boolean removeListener(UiEventListener listener) {
 
-    EventSourceAdapter<UiEvent, UiEventListener> adapter = this.eventAdapter.removeListener(listener);
+    EventSourceAdapter<UiEvent, EventListener<UiEvent>> adapter = this.eventAdapter.removeListener(listener);
     if (adapter == null) {
       return false;
     }
@@ -107,7 +111,7 @@ public abstract class AbstractUiNativeWidget extends AbstractUiWidget
   /**
    * @return the {@link EventSourceAdapter}.
    */
-  protected EventSourceAdapter<UiEvent, UiEventListener> getEventAdapter() {
+  protected EventSourceAdapter<UiEvent, EventListener<UiEvent>> getEventAdapter() {
 
     return this.eventAdapter;
   }

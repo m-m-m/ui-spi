@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
-import io.github.mmm.event.AbstractEventSource;
+import io.github.mmm.event.AbstractEventSender;
 import io.github.mmm.ui.api.controller.UiController;
 import io.github.mmm.ui.api.controller.UiEmbedding;
 import io.github.mmm.ui.api.controller.UiNavigationEvent;
@@ -22,7 +22,7 @@ import io.github.mmm.ui.api.widget.UiRegularWidget;
  * @since 1.0.0
  */
 public abstract class AbstractUiNavigationManager
-    extends AbstractEventSource<UiNavigationEvent, UiNavigationEventListener> implements UiNavigationManager {
+    extends AbstractEventSender<UiNavigationEvent, UiNavigationEventListener> implements UiNavigationManager {
 
   private final Map<String, AbstractUiController<?>> id2controllerMap;
 
