@@ -3,8 +3,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 /**
- * Provides SPI for controller management and navigation.
- * 
+ * Provides service provider interface (SPI) for controller management and navigation.
+ *
  * @provides io.github.mmm.ui.api.controller.UiController
  * @uses io.github.mmm.ui.api.controller.UiController
  */
