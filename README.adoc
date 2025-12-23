@@ -6,7 +6,7 @@ image:https://github.com/m-m-m/ui-spi/actions/workflows/build.yml/badge.svg["Bui
 == mmm-ui-spi
 
 image:https://img.shields.io/maven-central/v/io.github.m-m-m/mmm-ui-spi-all.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:io.github.m-m-m%20a:mmm-ui-spi-*]
-image:https://javadoc.io/badge2/io.github.m-m-m/mmm-ui-spi-core/javadoc.svg["apidoc",link="https://m-m-m.github.io/docs/api/io.github.mmm.ui.spi.core/module-summary.html"]
+image:https://javadoc.io/badge2/io.github.m-m-m/mmm-ui-spi-core/javadoc.svg["JavaDoc",link=https://javadoc.io/doc/io.github.m-m-m/mmm-ui-spi-core]
 
 The module `mmm-ui-spi-all` provides the service provider interface (SPI) of https://github.com/m-m-m/ui-api[mmm-ui-api].
 It contains the generic and toolkit-agnostic part of the implementation that is shared between all implementations.
