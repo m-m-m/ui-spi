@@ -10,11 +10,11 @@ import io.github.mmm.ui.api.datatype.UiStyles;
 /**
  * Test of {@link UiStylesImpl}.
  */
-public class UiStylesImplTest extends Assertions {
+class UiStylesImplTest extends Assertions {
 
   /** Test of {@link UiStylesImpl#add(String)} and of {@link UiStylesImpl#remove(String)}. */
   @Test
-  public void testStyles() {
+  void testStyles() {
 
     UiStyles styles = new UiStylesImpl();
     assertThat(styles.toString()).isEmpty();
